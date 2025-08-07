@@ -1,5 +1,10 @@
+from src.services.inventory import Inventory
+
+inv = Inventory()
+
+
 def main():
-    print("Hello from aegix!")
+    inv.generate_report_by_console()
 
 
 if __name__ == "__main__":

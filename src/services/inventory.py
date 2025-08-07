@@ -51,20 +51,30 @@ class Inventory():
         mac = get_mac_address().upper()
         return mac
 
-    def _lenght_format(bytes_val, sufixo='B'):
+    def _lenght_format(selfm, bytes_val, sufixo='B'):
         for unidade in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
             if abs(bytes_val) < 1024.0:
                 return f"{bytes_val:3.1f} {unidade}{sufixo}"
             bytes_val /= 1024.0
         return f"{bytes_val:.1f} Y{sufixo}"
 
-    def _get_disk_space_from_inventory(self) -> str:
+    def _get_disk_space_from_inventory(self) -> list:
         partitions = psutil.disk_partitions()
+        usage_list = {}
         for partition in partitions:
             usage = psutil.disk_usage(partition.mountpoint)
         
+            usage_dict = {
+                'Total': self._lenght_format(usage.total),
+                'Used': self._lenght_format(usage.used),
+                'Free': self._lenght_format(usage.free),
+                'Percent': f"{usage.percent}%"
+            }
+            
+            device = partition.device.removesuffix(':\\')
+            usage_list[device] = usage_dict
         
-        return usage
+        return usage_list
 
 
     def generate_report_by_console(self):
